@@ -5,7 +5,8 @@
  */
 package br.com.sermed.view;
 
-import br.com.sermed.modelDao.ProdutosDao;
+import br.com.sermed.SpringContext;
+import br.com.sermed.modelDao.ProdutosService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,22 +16,20 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TelaEstoque extends javax.swing.JFrame {
+public final class TelaEstoque extends javax.swing.JFrame {
 
-   private final ProdutosDao listener;
-   
+    private static final long serialVersionUID = 9118617959579785426L;
+    private final ProdutosService listener;
+
     public TelaEstoque() {
         initComponents();
-        listener = new ProdutosDao(this);
+        listener = SpringContext.getApplicationContext().getBean(ProdutosService.class);
+        listener.setForm(this);
         btnCadastrar.addActionListener(listener);
         btnAlterar.addActionListener(listener);
         btnDeletar.addActionListener(listener);
         btnListar.addActionListener(listener);
     }
-
-   
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -176,7 +175,7 @@ public class TelaEstoque extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
+
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     /**
@@ -231,6 +230,5 @@ public class TelaEstoque extends javax.swing.JFrame {
     private javax.swing.JTextField txtPreco;
     private javax.swing.JTextField txtQuantidade;
     // End of variables declaration//GEN-END:variables
-
 
 }

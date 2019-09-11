@@ -6,21 +6,15 @@
 package br.com.sermed.view;
 
 import br.com.dev.engine.date.Datas;
-import br.com.sermed.conecta.ConnectionFactory;
+import br.com.sermed.SpringContext;
 import br.com.sermed.model.Caixa;
 import br.com.sermed.model.Produto;
-import br.com.sermed.modelDao.CaixaDao;
-import br.com.sermed.modelDao.ProdutosDao;
-import br.com.sermed.modelDao.UsersDao;
+import br.com.sermed.modelDao.CaixaService;
+import br.com.sermed.modelDao.ProdutosService;
 import br.com.sermed.propridedades.Propriedades;
-import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import br.com.sermed.tables.TableModel_Produtos;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,39 +24,23 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TelaCaixa extends javax.swing.JFrame {
-    
-    private CaixaDao dao = new CaixaDao();
-    private double totalSoma;
+public final class TelaCaixa extends javax.swing.JFrame {
+
+    private static final long serialVersionUID = -6723684940666497838L;
+    private final TableModel_Produtos model = new TableModel_Produtos();
+    private final CaixaService dao = SpringContext.getApplicationContext().getBean(CaixaService.class);
     private Date dataAtual = new Date();
-    private Connection con = ConnectionFactory.getConection();
-    private double valor;
 
     public boolean saveCaixa() {
-        String sql = "INSERT INTO TB_VENDAS (NUM_VENDA,VALOR_TOTAL,DATA_ATUAL) VALUES (NEXT VALUE FOR SEQ_TB_VENDAS,?,?)";
-        try {
-        PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setDouble(1, (this.getTotalSoma()));
-            stmt.setObject(2, (this.getDataAtual()));
-            stmt.execute();
-            stmt.close();
-            con.commit();
-            return true;
-        } catch (SQLException ex) {
-            System.err.println("Erro" + ex);
-            return false;
-        }
+        return dao.saveOrUpdate(new Caixa(null, model.getValorTotal(), dataAtual, 0d));
     }
-     public boolean saveCaixa2(){
-        return dao.saveOrUpdate(new Caixa(null, totalSoma, dataAtual, 0d));
-     }
+
     public TelaCaixa() {
         initComponents();
-       // lblData.setText(new SimpleDateFormat("dd/MM/yyyy").format(dataAtual));
-        lblData.setText(Datas.getDateExtend("SERTAOZINHO", LocalDate.now()));
+        lblData.setText(Datas.getDateExtend("Sertãozinho", LocalDate.now()));
         lblOp.setText(Propriedades.getUser().getLogin());
+        tbCaixa.setModel(model);
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -307,12 +285,9 @@ public class TelaCaixa extends javax.swing.JFrame {
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
         //REMOVER
         //Remove um objeto da tabela e subtrai o valor do produto em sue total
-        setValor((double) tbCaixa.getModel().getValueAt(tbCaixa.getSelectedRow(), 2));
-        System.out.println(valor);
-        DefaultTableModel model = (DefaultTableModel) tbCaixa.getModel();
-        model.removeRow(tbCaixa.getSelectedRow());
-        setTotalSoma(totalSoma-getValor());
-        txtTotal.setText(String.valueOf(getTotalSoma()));
+
+        model.removerProduto(tbCaixa.getSelectedRow());
+        txtTotal.setText(String.valueOf(model.getValorTotal()));
     }//GEN-LAST:event_btnRemoverActionPerformed
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
@@ -321,33 +296,21 @@ public class TelaCaixa extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         //VENDA
-        saveCaixa2();
+        saveCaixa();
         txtTotal.setText("");
-        DefaultTableModel model = (DefaultTableModel) tbCaixa.getModel();
-        int rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-        model.fireTableDataChanged();
+        model.limparLista();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //ADICIONAR
-        Produto produto = new ProdutosDao().findByCodigo2(Integer.parseInt(txtCodigo.getText()));
-        DefaultTableModel model = (DefaultTableModel) tbCaixa.getModel();
-        Object[] p = new Object[3];
-        p[0] = produto.getNome();
-        p[1] = txtQuantidade.getText();
-        p[2] = produto.getPreco() * Integer.parseInt(p[1].toString());
-        setTotalSoma(getTotalSoma() + ((double) p[2]));
-        System.out.println("total da soma é: " + getTotalSoma());
-        model.addRow(p);
-        model.fireTableDataChanged();
-        txtTotal.setText(String.valueOf(getTotalSoma()));
+        Produto produto = SpringContext.getApplicationContext().getBean(ProdutosService.class)
+                .findByCodigo(Integer.parseInt(txtCodigo.getText()));
+        model.addProduto(produto);
+        System.out.println("total da soma é: " + model.getValorTotal());
+        txtTotal.setText(String.valueOf(model.getValorTotal()));
         txtCodigo.setText("");
         txtQuantidade.setText("");
         txtCodigo.requestFocus();
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

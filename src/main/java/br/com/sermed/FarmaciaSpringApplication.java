@@ -16,7 +16,8 @@ public class FarmaciaSpringApplication implements CommandLineRunner {
                 .headless(false)
                 .web(WebApplicationType.NONE)
                 .bannerMode(Banner.Mode.OFF)
-                .build();
+                .build()
+                .run(args);
     }
 
     @Override

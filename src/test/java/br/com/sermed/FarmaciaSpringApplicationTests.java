@@ -1,6 +1,8 @@
 package br.com.sermed;
 
+import br.com.sermed.model.Users;
 import br.com.sermed.repositories.ProdutoRepository;
+import br.com.sermed.repositories.UsersRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,9 @@ public class FarmaciaSpringApplicationTests {
     public void contextLoads() {
     }
     @Autowired
-    private ProdutoRepository cxRepo;
-    @Test
+    private UsersRepository cxRepo;
+    //@Test
     public void test(){
-        System.out.println(cxRepo.findByCodigo(1));
+        cxRepo.save(new Users(1l, "JOAO", "123", "a"));
     }
 }

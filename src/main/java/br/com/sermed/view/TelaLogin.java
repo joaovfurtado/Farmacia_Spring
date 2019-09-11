@@ -5,7 +5,8 @@
  */
 package br.com.sermed.view;
 
-import br.com.sermed.modelDao.UsersDao;
+import br.com.sermed.SpringContext;
+import br.com.sermed.modelDao.UsersService;
 import br.com.sermed.propridedades.Propriedades;
 import javax.swing.JOptionPane;
 
@@ -17,7 +18,6 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private static final long serialVersionUID = 3724402538540248289L;
 
-    
     /**
      * Creates new form TelaLogin
      */
@@ -130,14 +130,14 @@ public class TelaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEstoqueActionPerformed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        UsersDao dao = new UsersDao();
-        if (dao.validaLogin2(txtUsuario.getText(), String.copyValueOf(txtSenha.getPassword()))) {
-            
+        UsersService service = SpringContext.getApplicationContext().getBean(UsersService.class);
+        if (service.validaLogin(txtUsuario.getText(), String.copyValueOf(txtSenha.getPassword()))) {
+
             TelaMenu m = new TelaMenu();
             m.setVisible(true);
             dispose();
-            
-        }else{
+
+        } else {
             JOptionPane.showMessageDialog(null, "ERRO");
         }
     }//GEN-LAST:event_btnEntrarActionPerformed
