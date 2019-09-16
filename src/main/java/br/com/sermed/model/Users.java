@@ -57,7 +57,7 @@ public class Users implements UserDetails {
     @Column(name = "USUARIOS", length = 40)
     private String login;
     @Setter
-    @Column(name = "SENHA", length = 40)
+    @Column(name = "SENHA", length = 255)
     private String password;
     @Setter
     @Getter
