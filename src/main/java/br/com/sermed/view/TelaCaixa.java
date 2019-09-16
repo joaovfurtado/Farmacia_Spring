@@ -38,7 +38,7 @@ public final class TelaCaixa extends javax.swing.JFrame {
     public TelaCaixa() {
         initComponents();
         lblData.setText(Datas.getDateExtend("Sertãozinho", LocalDate.now()));
-        lblOp.setText(Propriedades.getUser().getLogin());
+        lblOp.setText(Propriedades.getUser().getUsername());
         tbCaixa.setModel(model);
     }
 

@@ -9,6 +9,9 @@ import br.com.sermed.SpringContext;
 import br.com.sermed.modelDao.UsersService;
 import br.com.sermed.propridedades.Propriedades;
 import javax.swing.JOptionPane;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
 
 /**
  *
@@ -131,8 +134,8 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         UsersService service = SpringContext.getApplicationContext().getBean(UsersService.class);
-        if (service.validaLogin(txtUsuario.getText(), String.copyValueOf(txtSenha.getPassword()))) {
-
+        Authentication authentication = service.authentication(txtUsuario.getText(), String.copyValueOf(txtSenha.getPassword()));
+        if (authentication.isAuthenticated()) {
             TelaMenu m = new TelaMenu();
             m.setVisible(true);
             dispose();

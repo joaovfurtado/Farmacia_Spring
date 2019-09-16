@@ -5,21 +5,24 @@
  */
 package br.com.sermed.model;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.eclipse.persistence.annotations.Index;
 import org.eclipse.persistence.annotations.Indexes;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * @author joão.furtado
  */
-@Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,20 +43,29 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NamedQueries({
     @NamedQuery(name = "users.findByLogin", query = "FROM Users AS us WHERE us.login = :login AND us.password = :password")
 })
-@SequenceGenerator(name = "SEQ_TB_USUARIOS",initialValue = 1,allocationSize = 1)
+@SequenceGenerator(name = "SEQ_TB_USUARIOS", initialValue = 1, allocationSize = 1)
 public class Users implements UserDetails {
 
     private static final long serialVersionUID = -1742365351012379868L;
 
     @Id
     @GeneratedValue(generator = "SEQ_TB_USUARIOS", strategy = GenerationType.SEQUENCE)
+    @Getter
+    @Setter
     private Long id;
+    @Setter
     @Column(name = "USUARIOS", length = 40)
     private String login;
+    @Setter
     @Column(name = "SENHA", length = 40)
     private String password;
+    @Setter
+    @Getter
     @Column(name = "PERM", length = 1)
     private String perm;
+    @Setter
+    @Transient
+    private List<GrantedAuthority> authority;
 
     public Users(String login) {
         this.login = login;
@@ -61,7 +73,7 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authority;
     }
 
     @Override
@@ -87,6 +99,11 @@ public class Users implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
 }

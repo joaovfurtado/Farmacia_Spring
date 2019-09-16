@@ -6,41 +6,27 @@
                 <packaging>jar</packaging>
             </packagings>
             <goals>
-                <goal>spring-boot:run</goal>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <spring-boot.run.jvmArguments>-noverify -XX:TieredStopAtLevel=1</spring-boot.run.jvmArguments>
-                <spring-boot.run.mainClass>br.com.sermed.FarmaciaSpringApplication</spring-boot.run.mainClass>
-                <Env.DEBUG>true</Env.DEBUG>
+                <exec.args>-classpath %classpath br.com.sermed.FarmaciaSpringApplication</exec.args>
+                <exec.executable>java</exec.executable>
             </properties>
         </action>
-         <action>
+        <action>
             <actionName>debug</actionName>
             <packagings>
                 <packaging>jar</packaging>
             </packagings>
             <goals>
-                <goal>spring-boot:run</goal>
-            </goals>
-            <properties>
-                <spring-boot.run.jvmArguments>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -noverify -XX:TieredStopAtLevel=1</spring-boot.run.jvmArguments>
-                <spring-boot.run.mainClass>br.com.sermed.FarmaciaSpringApplication</spring-boot.run.mainClass>
-                <Env.DEBUG>true</Env.DEBUG>
-                <jpda.listen>true</jpda.listen>
-            </properties>
-        </action>
-         <action>
-            <actionName>profile</actionName>
-            <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-            <goals>
                 <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>--classpath %classpath br.com.sermed.FarmaciaSpringApplication</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath br.com.sermed.FarmaciaSpringApplication</exec.args>
                 <exec.executable>java</exec.executable>
+                <jpda.listen>true</jpda.listen>
             </properties>
         </action>
     </actions>
